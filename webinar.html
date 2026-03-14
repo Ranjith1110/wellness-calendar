@@ -1,0 +1,3519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Wellness Calendar — Webinar (Broker/Corporate Selector)</title>
+
+    <!-- Fonts & icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bitcount+Prop+Single:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/swiper@9/swiper-bundle.min.css" />
+
+    <style>
+        /* ---------- Base layout ---------- */
+        body {
+            margin: 0;
+            display: flex;
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #f6fdfb, #e9f8f7, #fdfdfd);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #1da69a;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .sidebar h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .sidebar nav {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .sidebar nav a {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #fff;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .sidebar nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .main-content {
+            margin-left: 270px;
+            width: calc(100% - 260px);
+            padding: 18px;
+        }
+
+        .wellness-calendar {
+            padding: 6px 6px;
+            color: #333;
+        }
+
+        .calendar-header {
+            text-align: left;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+
+        .calendar-header h1 {
+            margin: 0;
+            color: #1da69a;
+            font-size: 1.6rem;
+        }
+
+        /* Broker/Corporate controls */
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin: 12px 0 18px;
+            flex-wrap: wrap;
+        }
+
+        .broker-select-wrap {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .broker-select-wrap label {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .broker-select-wrap select {
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+            min-width: 180px;
+            background: white;
+        }
+
+        .select-corporate {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            margin-top: 6px;
+        }
+
+        .select-corporate>div {
+            width: 160px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            padding: 10px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            cursor: default;
+        }
+
+        .select-corporate img {
+            width: 72px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .select-corporate h4 {
+            margin: 0;
+            text-transform: capitalize;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .select-corporate button {
+            padding: 6px 10px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .select-corporate .select-btn {
+            background: #1da69a;
+            color: white;
+        }
+
+        .select-corporate .view-btn {
+            background: #eee;
+            color: #333;
+        }
+
+        .wc-active-corp {
+            outline: 3px solid rgba(29, 166, 154, 0.14);
+            transform: translateY(-4px);
+        }
+
+        /* Buttons */
+        .main-btn {
+            background: #1da69a;
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background .3s;
+        }
+
+        .main-btn.secondary {
+            background: #eee;
+            color: #333;
+        }
+
+        /* Swiper and cards */
+        .well-card {
+            margin-bottom: 1.75rem;
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .calendar-month {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 6px;
+            padding: 0 8px;
+        }
+
+        .calendar-month h1 {
+            font-size: 1.3rem;
+            margin: 0;
+            color: #1da69a;
+        }
+
+        .pricing-sec {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #444;
+            font-weight: 600;
+        }
+
+        .calendar-grid.swiper {
+            max-width: 1200px;
+            margin: 8px 0 28px;
+            position: relative;
+            padding-bottom: 66px;
+        }
+
+        .calendar-grid .swiper-wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        .calendar-grid .swiper-slide {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .calendar-card {
+            position: relative;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(6px);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.06);
+            transition: transform .35s ease, box-shadow .35s ease;
+            display: flex;
+            flex-direction: column;
+            width: 380px;
+            height: 300px;
+            flex: 0 0 auto;
+        }
+
+        .calendar-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            transition: transform .35s ease;
+            z-index: 1;
+        }
+
+        .calendar-card:hover img {
+            transform: scale(1.06);
+        }
+
+        .calendar-content {
+            padding: 14px;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .calendar-content h2 {
+            font-size: 1rem;
+            margin: 0;
+            color: #1da69a;
+            line-height: 1.3;
+        }
+
+        .calendar-card.hide {
+            display: none !important;
+        }
+
+        /* Swiper nav */
+        .wc-swiper-nav {
+            position: absolute;
+            right: 18px;
+            bottom: 12px;
+            z-index: 45;
+            display: flex;
+            gap: 8px;
+        }
+
+        .wc-swiper-nav .wc-nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 999px;
+            border: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.08);
+            background: #fff;
+        }
+
+        .wc-nav-prev i,
+        .wc-nav-next i {
+            color: #1da69a;
+            font-size: 14px;
+        }
+
+        /* modal */
+        .wc-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 12, 20, 0.45);
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .wc-modal {
+            width: min(980px, 96%);
+            max-height: 86vh;
+            overflow: auto;
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 18px 50px rgba(2, 6, 23, 0.25);
+        }
+
+        .wc-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+        }
+
+        .wc-table th,
+        .wc-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .wc-checkbox-col {
+            width: 48px;
+            text-align: center;
+        }
+
+        .wc-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 0;
+            cursor: pointer;
+            background: #f1f1f1;
+        }
+
+        .wc-btn.primary {
+            background: #1da69a;
+            color: white;
+        }
+
+        .muted {
+            color: #666;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .wc-no-items {
+            text-align: center;
+            padding: 18px;
+            color: #777;
+        }
+
+        @media (max-width: 767px) {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 12px;
+            }
+
+            .calendar-card {
+                width: 100%;
+                height: 260px;
+            }
+
+            .select-corporate>div {
+                width: 48%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h2><i class="fa fa-leaf"></i></h2>
+        <nav>
+            <a href="./index.html"><i class="fa fa-heart"></i> Wellness Calendar</a>
+            <a href="./processflow.html"><i class="fa fa-calendar"></i> Process Flow</a>
+            <a href="./webinar.html"><i class="fa fa-calendar"></i> Webinar</a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <section class="wellness-calendar">
+            <div class="calendar-header">
+                <h1>Webinar</h1>
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <button class="main-btn" id="btn-all">All</button>
+                    <button class="main-btn secondary" id="btn-reset">Reset Selection</button>
+                </div>
+            </div>
+
+            <!-- Broker + Corporate Controls -->
+            <div class="controls-row">
+                <div class="broker-select-wrap">
+                    <label for="brokerSelect">Select Broker:</label>
+                    <select id="brokerSelect" aria-label="Select broker">
+                        <option value="" selected>Select Broker</option>
+                        <option value="broker1">Broker 1</option>
+                        <option value="broker2">Broker 2</option>
+                    </select>
+                </div>
+
+                <div class="broker-select-wrap hide" id="corporateDropdownWrap" aria-hidden="true">
+                    <label for="corporateSelect">Select Corporate:</label>
+                    <select id="corporateSelect" aria-label="Select corporate">
+                        <option value="" disabled selected>Select Corporate</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Corporate tiles (hidden until corporate selected) -->
+            <div class="select-corporate" id="corporateContainer" aria-hidden="false" style="margin-bottom:14px">
+                <div data-broker="broker1" data-corp="corporate1" tabindex="0">
+                    <img src="https://via.placeholder.com/150x40?text=Corp+1" alt="">
+                    <h4>corporate 1</h4>
+                    <div style="display:flex;gap:6px;">
+                        <button class="select-btn">Select</button>
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div data-broker="broker2" data-corp="corporate2" tabindex="0">
+                    <img src="https://via.placeholder.com/150x40?text=Corp+2" alt="">
+                    <h4>corporate 2</h4>
+                    <div style="display:flex;gap:6px;">
+                        <button class="select-btn">Select</button>
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div data-broker="broker1" data-corp="corporate3" tabindex="0">
+                    <img src="https://via.placeholder.com/150x40?text=Corp+3" alt="">
+                    <h4>corporate 3</h4>
+                    <div style="display:flex;gap:6px;">
+                        <button class="select-btn">Select</button>
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+                <div data-broker="broker2" data-corp="corporate4" tabindex="0">
+                    <img src="https://via.placeholder.com/150x40?text=Corp+4" alt="">
+                    <h4>corporate 4</h4>
+                    <div style="display:flex;gap:6px;">
+                        <button class="select-btn">Select</button>
+                        <button class="view-btn">View</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mental Health -->
+            <div class="well-card" data-well="mental">
+                <div class="calendar-month">
+                    <h1>Mental Health</h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7000</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5000</span></span>
+                    </h4>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Workplace Stress</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Mindfulness & Meditation Techniques During the Workday</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Mental Health and Technology: Leveraging Digital Tools for Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Anxiety and Depression Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Building Resilience: Navigating Life's Challenges</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Women's Health -->
+            <div class="well-card" data-well="womens">
+                <div class="calendar-month">
+                    <h1>Women's Health</h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                </div>
+
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Menstrual Health Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Menopause and Workplace Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Breast Health and Cancer Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Women's Mental Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Self-Care for Women</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Men's Health -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Men's Health
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Prostate Health Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Testicular Cancer Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Men's Mental Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Healthy Lifestyle Choices for Men</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Stress Management for Men</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Preventing Chronic Diseases: Lifestyle Changes for Men</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Overcoming Addiction: Support and Recovery</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Stroke Awareness -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Stroke Awareness
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Stroke</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Stroke Prevention Strategies</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Recognizing Stroke Symptoms</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Stroke Recovery and Rehabilitation</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Supporting Colleagues with Stroke</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Stroke and Mental Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Nutrition for Stroke Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Women's Stroke Risk Factors</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cancer Awareness -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Cancer Awareness
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7000</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5000</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Cancer</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Cancer Prevention Strategies</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Early Detection and Screening</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Supporting Colleagues with Cancer</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Cancer and Workplace Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Coping with Cancer Diagnosis</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Accommodation for Cancer Patients</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Family Support in Cancer Care</h2>
+                        </div>
+                    </div>
+
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Common Cancers: Signs and Symptoms</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Importance of Cancer Screening and Early Detection</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Cancer Prevention Programs</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Nutrition and Lifestyle to Reduce Cancer Risk</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Tobacco and Alcohol: Major Cancer Risk Factors</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Breast and Cervical Cancer Awareness for Women</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Prostate and Testicular Cancer Awareness for Men</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Skin Cancer and Sun Protection</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> HPV Vaccination: Cancer Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Mental Health Support for Cancer Patients and Survivors</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Navigating Cancer Diagnosis and Treatment</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Role of Exercise in Cancer Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Reducing Exposure to Occupational Carcinogens</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Cancer Survivorship and Returning to Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Advances in Cancer Screening Technologies</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Cardiology -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Cardiology
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Heart Health Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing High Blood Pressure</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Cardiovascular Disease Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Heart Failure</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Cardiac Rehabilitation</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Heart-Healthy Diets</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Cholesterol and Heart Disease</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Women and Heart Disease</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Importance of Regular Heart Health Screenings</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Mental Wellness for Cardiovascular Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Strategies for Reducing Sedentary Lifestyle Risks</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Atherosclerosis and Stroke Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Diabetes to Prevent Heart Complications</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Hypertension Control: Medication and Lifestyle</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Impact of Sleep on Heart Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Use of Technology and Apps for Heart Health Monitoring</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Neurology -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Neurology
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Stroke Awareness and Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Migraines</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Epilepsy</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Multiple Sclerosis Awareness</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Neurological Health and Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Cognitive Health and Aging</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sleep Disorders and Neurological Impact</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Accommodations for Neurological Disorders</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Diabetes -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Diabetes
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹6200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹4200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Diabetes Management and Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Blood Sugar Levels</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Nutrition and Diabete</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Exercise and Diabetes Management</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Diabetes and Mental Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Reversing Prediabetes</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Diabetes and Eye Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Diabetes at Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Recognizing Hypoglycemia and Hyperglycemia Symptoms</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Healthy Eating at Work: Diabetes-Friendly Meal Planning</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Importance of Regular Physical Activity for Diabetes Control</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Diabetes Complications: Prevention and Early Detection</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Technology Aids: Glucose Monitoring Apps and Devices</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Supporting Colleagues with Diabetes in the Workplace</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Mental Health and Diabetes Management</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Current Advances in Diabetes Care and Research</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Orthopaedics -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Orthopaedics
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹6900</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹4900</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Back Pain Management</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Osteoporosis</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Sports Injury Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Arthritis Awareness and Management</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Orthopaedic Health and Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Ergonomics for Orthopaedic Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Joint Preservation Strategies</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Recovery After Orthopaedic Surgery</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Preventing Back Pain and Neck Pain at Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Ergonomics: Setting Up a Healthy Workspace</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Arthritis and Joint Pain</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Importance of Stretching and Movement Breaks</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Safe Lifting Techniques</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Posture Correction and its Benefits</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Exercise Programs for Musculoskeletal Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Impact of Sedentary Lifestyles on Joints</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Recognizing Early Symptoms of Musculoskeletal Problems</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Role of Nutrition in Bone and Muscle Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Mental Health and Chronic Pain Management</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Use of Technology for Posture and Activity Monitoring</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Preventing Repetitive Strain Injuries</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Supporting Employees with Chronic Musculoskeletal Disorders</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Advances in Treatment of Musculoskeletal Conditions</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Dermatology -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Dermatology
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7000</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5000</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Skin Cancer Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Acne</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Eczema</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Skin Health and Nutrition</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Dermatological Conditions and Treatment</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sun Safety and UV Protection</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Seasonal Skin Care</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Skin Health and Stress</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Gastroenterology -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Gastroenterology
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7000</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5000</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Digestive Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Irritable Bowel Syndrome (IBS)</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Inflammatory Bowel Disease (IBD) Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Gastroesophageal Reflux Disease (GERD) Management</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Nutrition and Digestive Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Gut-Brain Connection</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Food Allergies and Intolerances</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Digestive Disorders in the Workplace</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Urology -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Urology
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹6800</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹4800</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Prostate Health Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Urinary Tract Infections</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Bladder Health and Control</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Kidney Stone Prevention</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Urological Health and Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sexual Health and Urological Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Hydration and Kidney Function</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Wellness and Urological Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding CKD: Causes and Symptoms</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Importance of Regular Kidney Function Tests</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Diabetes and Hypertension to Prevent CKD</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Nutrition for Kidney Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Recognizing Early Signs of Kidney Damage</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Hydration and Kidney Function</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Impact of Medications and Toxins on Kidneys</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Role of Exercise in CKD Prevention</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Supporting Employees Undergoing Dialysis</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Stress Management for CKD Patients</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Role of Smoking and Alcohol in Kidney Disease</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Mental and Emotional Wellbeing with CKD</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> CKD and Cardiovascular Risk</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Advances in Kidney Disease Treatment</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Workplace Accommodations for CKD Patients</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Sleep Health -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Sleep Health
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7200</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5200</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Understanding Sleep Disorders</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Sleep and Productivity</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Insomnia</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sleep Hygiene Practices</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sleep and Mental Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Shift Work and Sleep Health</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Sleep Myths and Facts</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Power Napping for Productivity</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Workforce Wellness -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Workforce Wellness
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹5800</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹3800</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Stress in High-Pressure Work Environments</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Building Resilience in the Corporate World</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Effective Communication and Leadership Skills</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Work-Life Balance for Busy Professionals</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Burnout and Preventing Exhaustion</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Building a Supportive Network at Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Navigating Office Politics and Conflict Resolution</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Time Management and Productivity Hacks</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Prioritizing Self-Care in a Busy Schedule</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Leadership and Emotional Intelligence</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Building a Healthy Lifestyle at Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Effective Goal Setting and Achievement</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Remote Work Challenges</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Creating a Positive Work Culture</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Financial Wellness -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Financial Wellness
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹9000</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹7000</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Budgeting Basics for Professionals</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Emergency Funds: Why & How to Build One</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Demystifying Credit Scores</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Smart Debt Management</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Retirement Planning for All Ages</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Investment Fundamentals</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Understanding Insurance Policies</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Maximizing Workplace Benefits</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Tax Planning and Deductions</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Financial Goal Setting</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Digital Wellness -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Digital Wellness
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹6800</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹4800</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Reducing Screen Fatigue</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Digital Detox Strategies</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Managing Notifications and Information Overload</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Healthy Tech Use Habits</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> The Psychology of Digital Addiction</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Digital Boundaries for Work-Life Balance</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Mindful Use of Social Media</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Ergonomics for Remote Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Tech for Wellness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Zoom Fatigue</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Workplace Relationships and Communication -->
+            <div class="well-card">
+                <div class="calendar-month">
+                    <h1>
+                        Workplace Relationships and Communication
+                    </h1>
+                    <h4 class="pricing-sec">
+                        <span>Price:<strike style="color: red;"> ₹7800</strike></span>
+                        <span style="display: block;">Partner price: <span style="color: green;">₹5800</span></span>
+                    </h4>
+                    <!-- <p><i class="fa-solid fa-circle" style="color: #1da69a;"></i> Zumba (All are paid Offline session)
+                    </p> -->
+                </div>
+                <div class="calendar-grid">
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">02</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div> -->
+                        <!-- <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Mental Wellness.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Active Listening Skills</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">12</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/special-days/Jan 12.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Navigating Difficult Conversations</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="Complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">13</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Dental Camp.png" alt="">
+                        <div class="calendar-content">
+                            <h2>Assertive Communication at Work</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="paid">
+                        <!-- <div class="calendar-date">
+                            <span class="day">23</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-paid"><span>Paid</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Diet Planner.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Giving Constructive Feedback</h2>
+                        </div>
+                        <!-- <div class="pricing">
+                            <h4 class="price">Price: <strike style="color: red;">₹5000</strike></h4>
+                            <h4 class="partner-price">Partner Price: <span style="color: green;">₹5000</span></h4>
+                        </div> -->
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Receiving Feedback Gracefully</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Non-Verbal Communication Awareness</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Building Trust in Teams</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Emotional Intelligence in Leadership</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Cross-Cultural Communication Skills</h2>
+                        </div>
+                    </div>
+
+                    <div class="calendar-card" data-type="complementary">
+                        <!-- <div class="calendar-date">
+                            <span class="day">29</span><span class="month">Jan</span><span class="year">2025</span>
+                        </div>
+                        <div class="tag-complementary"><span>Free</span></div> -->
+                        <img src="./assets/wellness-calendar/jan-2025/jan-Nutrition Health.png" alt="">
+                        <div class="calendar-content">
+                            <h2> Managing Upward Communication</h2>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Wellness Calendar Modal (popup) -->
+    <div class="wc-modal-backdrop" id="wcModalBackdrop" aria-hidden="true">
+        <div class="wc-modal" role="dialog" aria-modal="true" aria-labelledby="wcModalTitle">
+            <div class="header" style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+                <div>
+                    <h3 id="wcModalTitle">Assign webinars — <span id="wcCorpName">Corporate</span></h3>
+                    <div class="muted">Select webinars from the list below and click Save to assign them to the
+                        corporate.</div>
+                </div>
+
+                <div class="wc-controls" style="display:flex;align-items:center;gap:8px">
+                    <label style="display:flex;align-items:center;gap:6px;font-size:13px">
+                        <input type="checkbox" id="wcSelectAllTop"> Select all
+                    </label>
+                    <button class="wc-btn secondary" id="wcCancelTop">Cancel</button>
+                    <button class="wc-btn primary" id="wcSaveTop">Save</button>
+                </div>
+            </div>
+
+            <table class="wc-table" aria-describedby="wcModalTitle">
+                <thead>
+                    <tr>
+                        <th class="wc-checkbox-col"><input type="checkbox" id="wcColSelectAll"></th>
+                        <th>Category</th>
+                        <th>Title</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody id="wcActivitiesTbody">
+                    <!-- JS will generate rows from existing .calendar-card elements -->
+                </tbody>
+            </table>
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px">
+                <button class="wc-btn" id="wcCancelBottom">Cancel</button>
+                <button class="wc-btn primary" id="wcSaveBottom">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Swiper JS -->
+    <script src="https://unpkg.com/swiper@9/swiper-bundle.min.js"></script>
+
+    <script>
+        /*****************************************************************
+         * 1) Build Swipers: convert each .calendar-grid into a Swiper,
+         *    and attach unique activity IDs to slides/cards.
+         * 2) Track swipers in an array for updates after filtering.
+         *****************************************************************/
+        document.addEventListener('DOMContentLoaded', () => {
+            const grids = document.querySelectorAll('.calendar-grid');
+            window.__wcSwipers = []; // store {swiper, uniq, gridEl, slidesWrapper}
+
+            grids.forEach((grid, gi) => {
+                const uniq = 'wc-swiper-' + gi;
+                grid.classList.add('swiper', uniq);
+
+                // Create wrapper and move calendar-card elements into slides
+                const wrapper = document.createElement('div');
+                wrapper.className = 'swiper-wrapper';
+
+                const cards = Array.from(grid.querySelectorAll('.calendar-card'));
+                cards.forEach((card, idx) => {
+                    const globalIdx = (gi * 1000) + idx; // unique-ish id across grids
+                    const actId = 'wc_act_' + globalIdx;
+                    // create slide and attach actId
+                    const slide = document.createElement('div');
+                    slide.className = 'swiper-slide';
+                    slide.style.display = 'flex';
+                    slide.style.justifyContent = 'center';
+                    slide.dataset.actId = actId;
+                    // tag both slide and card with actId
+                    card.dataset.actId = actId;
+                    card.dataset.gridIndex = gi;
+                    slide.appendChild(card);
+                    wrapper.appendChild(slide);
+                });
+
+                // Replace grid content with wrapper
+                grid.innerHTML = '';
+                grid.appendChild(wrapper);
+
+                // Navigation buttons (bottom-right)
+                const nav = document.createElement('div');
+                nav.className = 'wc-swiper-nav';
+
+                const prev = document.createElement('button');
+                prev.className = `wc-nav-btn wc-nav-prev ${uniq}-prev`;
+                prev.setAttribute('aria-label', 'Previous slide');
+                prev.innerHTML = '<i class="fa fa-chevron-left"></i>';
+
+                const next = document.createElement('button');
+                next.className = `wc-nav-btn wc-nav-next ${uniq}-next`;
+                next.setAttribute('aria-label', 'Next slide');
+                next.innerHTML = '<i class="fa fa-chevron-right"></i>';
+
+                nav.appendChild(prev);
+                nav.appendChild(next);
+                grid.appendChild(nav);
+
+                // Initialize Swiper without pagination
+                const swiper = new Swiper(`.${uniq}`, {
+                    slidesPerView: 1,
+                    spaceBetween: 28,
+                    loop: false,
+                    navigation: {
+                        nextEl: `.${uniq}-next`,
+                        prevEl: `.${uniq}-prev`,
+                    },
+                    breakpoints: {
+                        320: { slidesPerView: 1, spaceBetween: 16 },
+                        520: { slidesPerView: 1.2, spaceBetween: 18 },
+                        700: { slidesPerView: 2, spaceBetween: 20 },
+                        992: { slidesPerView: 3, spaceBetween: 28 },
+                        1400: { slidesPerView: 3, spaceBetween: 34 }
+                    },
+                    a11y: { enabled: true },
+                    keyboard: { enabled: true, onlyInViewport: true },
+                });
+
+                // Save references
+                window.__wcSwipers.push({ swiper, uniq, gridEl: grid, slidesWrapper: wrapper });
+            });
+        });
+
+        /*****************************************************************
+         * Modal, Broker/Corporate logic (based on your original file).
+         * Modified so corporate tiles are hidden until a specific corporate
+         * is chosen from the dropdown. Before choosing corporate, no tiles
+         * are shown.
+         *****************************************************************/
+        (function () {
+            const backdrop = document.getElementById('wcModalBackdrop');
+            const activitiesTbody = document.getElementById('wcActivitiesTbody');
+            const corpTiles = Array.from(document.querySelectorAll('.select-corporate > div'));
+            const colSelectAll = document.getElementById('wcColSelectAll');
+            const selectAllTop = document.getElementById('wcSelectAllTop');
+            const saveTop = document.getElementById('wcSaveTop');
+            const saveBottom = document.getElementById('wcSaveBottom');
+            const cancelTop = document.getElementById('wcCancelTop');
+            const cancelBottom = document.getElementById('wcCancelBottom');
+            const corpNameSpan = document.getElementById('wcCorpName');
+
+            const brokerSelect = document.getElementById('brokerSelect');
+            const corporateDropdownWrap = document.getElementById('corporateDropdownWrap');
+            const corporateSelect = document.getElementById('corporateSelect');
+
+            // saved mapping: key is corporate index (tile index), value is Set of actIds
+            const saved = {};
+            let editingCorpIndex = null;
+
+            // Helper: return all webinar activities across all grids
+            function getAllActivities() {
+                const slides = Array.from(document.querySelectorAll('.swiper-slide'));
+                return slides.map((slide, idx) => {
+                    const actId = slide.dataset.actId || ('wc_act_' + idx);
+                    const card = slide.querySelector('.calendar-card');
+                    const titleEl = card ? (card.querySelector('.calendar-content h2') || card.querySelector('h2')) : null;
+                    const title = titleEl ? titleEl.textContent.trim() : ('Activity ' + (idx + 1));
+                    // determine category (closest well-card heading)
+                    let category = '';
+                    const wellCard = card ? card.closest('.well-card') : null;
+                    if (wellCard) {
+                        const mh = wellCard.querySelector('.calendar-month h1');
+                        if (mh) category = mh.textContent.trim();
+                    }
+                    const type = (card && (card.dataset.type || '')).toString().trim().toLowerCase() === 'paid' ? 'Paid' : 'Complementary';
+                    return { id: actId, title, category, type, slideEl: slide, cardEl: card };
+                });
+            }
+
+            // Build modal rows from current activities
+            function buildTableRows() {
+                const activities = getAllActivities();
+                activitiesTbody.innerHTML = '';
+                if (activities.length === 0) {
+                    const tr = document.createElement('tr');
+                    const td = document.createElement('td');
+                    td.colSpan = 4; td.className = 'wc-no-items'; td.textContent = 'No webinars found on the page.';
+                    tr.appendChild(td); activitiesTbody.appendChild(tr); return;
+                }
+                activities.forEach(act => {
+                    const tr = document.createElement('tr');
+                    const td0 = document.createElement('td'); td0.className = 'wc-checkbox-col';
+                    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.className = 'wc-row-checkbox'; cb.dataset.actId = act.id;
+                    cb.addEventListener('change', updateSelectAllState);
+                    td0.appendChild(cb); tr.appendChild(td0);
+
+                    const tdCat = document.createElement('td'); tdCat.textContent = act.category; tr.appendChild(tdCat);
+                    const tdTitle = document.createElement('td'); tdTitle.textContent = act.title; tr.appendChild(tdTitle);
+                    const tdType = document.createElement('td'); tdType.textContent = act.type; tr.appendChild(tdType);
+
+                    activitiesTbody.appendChild(tr);
+                });
+            }
+
+            function updateSelectAllState() {
+                const checkboxes = Array.from(activitiesTbody.querySelectorAll('input.wc-row-checkbox'));
+                if (checkboxes.length === 0) {
+                    if (colSelectAll) { colSelectAll.checked = false; colSelectAll.indeterminate = false; }
+                    if (selectAllTop) { selectAllTop.checked = false; selectAllTop.indeterminate = false; }
+                    return;
+                }
+                const checkedCount = checkboxes.filter(c => c.checked).length;
+                if (checkedCount === 0) {
+                    if (colSelectAll) { colSelectAll.checked = false; colSelectAll.indeterminate = false; }
+                    if (selectAllTop) { selectAllTop.checked = false; selectAllTop.indeterminate = false; }
+                } else if (checkedCount === checkboxes.length) {
+                    if (colSelectAll) { colSelectAll.checked = true; colSelectAll.indeterminate = false; }
+                    if (selectAllTop) { selectAllTop.checked = true; selectAllTop.indeterminate = false; }
+                } else {
+                    if (colSelectAll) { colSelectAll.checked = false; colSelectAll.indeterminate = true; }
+                    if (selectAllTop) { selectAllTop.checked = false; selectAllTop.indeterminate = true; }
+                }
+            }
+
+            if (colSelectAll && selectAllTop) {
+                [colSelectAll, selectAllTop].forEach(el => {
+                    el.addEventListener('change', (e) => {
+                        const val = e.target.checked;
+                        Array.from(activitiesTbody.querySelectorAll('input.wc-row-checkbox')).forEach(cb => cb.checked = val);
+                        colSelectAll.checked = val; colSelectAll.indeterminate = false;
+                        selectAllTop.checked = val; selectAllTop.indeterminate = false;
+                    });
+                });
+            }
+
+            function openModalForCorp(idx) {
+                editingCorpIndex = idx;
+                buildTableRows();
+                const set = saved[String(idx)] || new Set();
+                Array.from(activitiesTbody.querySelectorAll('input.wc-row-checkbox')).forEach(cb => cb.checked = set.has(cb.dataset.actId));
+                updateSelectAllState();
+
+                const tile = corpTiles[idx];
+                corpNameSpan.textContent = tile && (tile.querySelector('h4') ? tile.querySelector('h4').textContent.trim() : ('Corporate ' + (idx + 1)));
+                backdrop.style.display = 'flex'; backdrop.setAttribute('aria-hidden', 'false');
+                const first = activitiesTbody.querySelector('input.wc-row-checkbox'); if (first) first.focus();
+            }
+
+            function closeModal() { backdrop.style.display = 'none'; backdrop.setAttribute('aria-hidden', 'true'); editingCorpIndex = null; }
+
+            function saveSelections() {
+                if (editingCorpIndex === null) return;
+                const checkedBoxes = Array.from(activitiesTbody.querySelectorAll('input.wc-row-checkbox')).filter(cb => cb.checked);
+                const ids = checkedBoxes.map(cb => cb.dataset.actId);
+                if (ids.length === 0) delete saved[String(editingCorpIndex)];
+                else saved[String(editingCorpIndex)] = new Set(ids);
+
+                showSavedForCorp(editingCorpIndex);
+                closeModal();
+            }
+
+            // show only saved activities for a corp (or show all if none saved)
+            function showSavedForCorp(idx) {
+                const key = String(idx);
+                const set = saved[key] || null;
+                const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+
+                if (!set || set.size === 0) {
+                    // no saved: show everything
+                    allSlides.forEach(slide => slide.style.display = '');
+                    allWellCards.forEach(wc => wc.style.display = '');
+                    highlightActiveCorp(idx);
+                    updateAllSwipers();
+                    return;
+                }
+
+                // hide all slides then show only slides whose actId is in the set
+                allSlides.forEach(slide => slide.style.display = 'none');
+                Array.from(set).forEach(actId => {
+                    const slide = document.querySelector(`.swiper-slide[data-act-id="${actId}"]`);
+                    if (slide) slide.style.display = '';
+                });
+
+                // hide month blocks that have no visible slides
+                allWellCards.forEach(wc => {
+                    const visible = Array.from(wc.querySelectorAll('.swiper-slide')).some(s => s.style.display !== 'none');
+                    wc.style.display = visible ? '' : 'none';
+                });
+
+                highlightActiveCorp(idx);
+                updateAllSwipers();
+            }
+
+            function highlightActiveCorp(activeIdx) {
+                corpTiles.forEach((t, i) => {
+                    if (i === activeIdx) t.classList.add('wc-active-corp');
+                    else t.classList.remove('wc-active-corp');
+                });
+            }
+
+            // update every swiper instance so layout recalculates after hiding slides
+            function updateAllSwipers() {
+                if (!window.__wcSwipers) return;
+                window.__wcSwipers.forEach(obj => {
+                    try {
+                        obj.swiper.update();
+                    } catch (err) {
+                        // ignore
+                    }
+                });
+            }
+
+            // Wire up tile buttons & click
+            corpTiles.forEach((tile, i) => {
+                const btns = Array.from(tile.querySelectorAll('button'));
+                let selectBtn = null, viewBtn = null;
+                btns.forEach(b => {
+                    const txt = b.textContent.trim().toLowerCase();
+                    if (txt.includes('select')) selectBtn = b;
+                    else if (txt.includes('view')) viewBtn = b;
+                });
+
+                if (selectBtn) {
+                    selectBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        openModalForCorp(i);
+                    });
+                }
+
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showSavedForCorp(i);
+                    });
+                }
+
+                // clicking tile itself will also view assigned webinars
+                tile.addEventListener('click', (e) => {
+                    showSavedForCorp(i);
+                });
+            });
+
+            /* ---------- CORPORATE dropdown logic (modified) ---------- */
+            function populateCorporateDropdownForBroker(brokerValue) {
+                if (!corporateSelect) return;
+                corporateSelect.innerHTML = `<option value="" disabled selected>Select Corporate</option>`;
+                corpTiles.forEach((tile, idx) => {
+                    if ((tile.dataset.broker || '') === brokerValue) {
+                        const corpLabel = tile.querySelector('h4') ? tile.querySelector('h4').textContent.trim() : (tile.dataset.corp || 'Corporate ' + (idx + 1));
+                        const opt = document.createElement('option');
+                        opt.value = String(idx); // store index only
+                        opt.textContent = corpLabel;
+                        corporateSelect.appendChild(opt);
+                    }
+                });
+                // ensure the first option (placeholder) is selected
+                corporateSelect.selectedIndex = 0;
+            }
+
+            function onBrokerChange() {
+                const val = brokerSelect.value;
+                if (!val) {
+                    if (corporateDropdownWrap) {
+                        corporateDropdownWrap.classList.add('hide');
+                        corporateDropdownWrap.setAttribute('aria-hidden', 'true');
+                    }
+                    // hide all tiles; show all webinars
+                    corpTiles.forEach(tile => tile.style.display = 'none');
+                    corpTiles.forEach(t => t.classList.remove('wc-active-corp'));
+                    const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                    const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+                    allWellCards.forEach(wc => wc.style.display = '');
+                    allSlides.forEach(s => s.style.display = '');
+                    updateAllSwipers();
+                    return;
+                }
+
+                // populate and show corporate dropdown
+                populateCorporateDropdownForBroker(val);
+                if (corporateDropdownWrap) {
+                    corporateDropdownWrap.classList.remove('hide');
+                    corporateDropdownWrap.setAttribute('aria-hidden', 'false');
+                }
+
+                // IMPORTANT: do NOT show corporate tiles immediately after selecting broker.
+                // Tiles should remain hidden until a specific corporate is selected from the dropdown.
+                corpTiles.forEach(tile => tile.style.display = 'none');
+                corpTiles.forEach(t => t.classList.remove('wc-active-corp'));
+
+                // reset webinars display (show everything)
+                const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+                allWellCards.forEach(wc => wc.style.display = '');
+                allSlides.forEach(s => s.style.display = '');
+                updateAllSwipers();
+            }
+
+            function onCorporateChange() {
+                const val = corporateSelect.value;
+                // If no valid corporate picked, hide all corporate tiles
+                if (val === null || val === '' || isNaN(Number(val))) {
+                    corpTiles.forEach(tile => {
+                        tile.style.display = 'none';
+                        tile.classList.remove('wc-active-corp');
+                    });
+                    return;
+                }
+                const idx = parseInt(val, 10);
+                // Show only the selected corporate tile, hide all others
+                corpTiles.forEach((tile, i) => {
+                    if (i === idx) {
+                        tile.style.display = '';
+                        tile.classList.add('wc-active-corp');
+                    } else {
+                        tile.style.display = 'none';
+                        tile.classList.remove('wc-active-corp');
+                    }
+                });
+
+                // Reset webinars view to show everything
+                const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+                allWellCards.forEach(wc => wc.style.display = '');
+                allSlides.forEach(s => s.style.display = '');
+                updateAllSwipers();
+            }
+
+            if (brokerSelect) {
+                brokerSelect.addEventListener('change', onBrokerChange);
+                // init: hide corporate dropdown and hide tiles until broker->corporate selected
+                (function init() {
+                    if (corporateDropdownWrap) {
+                        corporateDropdownWrap.classList.add('hide');
+                        corporateDropdownWrap.setAttribute('aria-hidden', 'true');
+                    }
+                    corpTiles.forEach(tile => tile.style.display = 'none');
+                })();
+            }
+
+            if (corporateSelect) {
+                corporateSelect.addEventListener('change', onCorporateChange);
+            }
+
+            // Modal backdrop + buttons
+            if (backdrop) backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
+            [cancelTop, cancelBottom].forEach(b => { if (b) b.addEventListener('click', closeModal); });
+            [saveTop, saveBottom].forEach(b => { if (b) b.addEventListener('click', saveSelections); });
+
+            // Expose for debugging if needed
+            window.wc_showSavedForCorp = showSavedForCorp;
+            window.wc_getSavedMap = () => saved;
+
+            // Top-level "All" and "Reset Selection" behavior
+            const btnAll = document.getElementById('btn-all');
+            const btnReset = document.getElementById('btn-reset');
+            btnAll.addEventListener('click', () => {
+                // show everything and remove corp highlighting
+                const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+                allWellCards.forEach(wc => wc.style.display = '');
+                allSlides.forEach(s => s.style.display = '');
+                corpTiles.forEach(t => t.classList.remove('wc-active-corp'));
+
+                // Show corporate tile only if a specific corporate is selected in the dropdown
+                const corpVal = corporateSelect ? corporateSelect.value : '';
+                if (corpVal !== null && corpVal !== '' && !isNaN(Number(corpVal))) {
+                    const idx = parseInt(corpVal, 10);
+                    corpTiles.forEach((tile, i) => { tile.style.display = (i === idx) ? '' : 'none'; });
+                } else {
+                    // No corporate selected: hide all tiles
+                    corpTiles.forEach(tile => tile.style.display = 'none');
+                }
+
+                updateAllSwipers();
+            });
+
+            btnReset.addEventListener('click', () => {
+                // clear saved assignments
+                for (const k of Object.keys(saved)) delete saved[k];
+                // show everything
+                const allWellCards = Array.from(document.querySelectorAll('.well-card'));
+                const allSlides = Array.from(document.querySelectorAll('.swiper-slide'));
+                allWellCards.forEach(wc => wc.style.display = '');
+                allSlides.forEach(s => s.style.display = '');
+                corpTiles.forEach(t => t.classList.remove('wc-active-corp'));
+                // reset dropdowns
+                if (brokerSelect) { brokerSelect.value = ''; }
+                if (corporateSelect) { corporateSelect.innerHTML = `<option value="" disabled selected>Select Corporate</option>`; }
+                if (corporateDropdownWrap) { corporateDropdownWrap.classList.add('hide'); corporateDropdownWrap.setAttribute('aria-hidden', 'true'); }
+                // hide all tiles initially
+                corpTiles.forEach(tile => tile.style.display = 'none');
+                updateAllSwipers();
+            });
+
+        })();
+    </script>
+</body>
+
+</html>
